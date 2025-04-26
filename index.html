@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)https://cya7n.github.io/Custom-Duels-Values/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sword Value Tracker</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #7f8c8d;
+            --accent: #3498db;
+            --godly: #e74c3c;
+            --exclusive: #9b59b6;
+            --event: #27ae60; /* Green */
+            --legendary: #f39c12; /* Orange */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-only {
+            display: none;
+        }
+
+        body.admin-mode .admin-only {
+            display: block;
+        }
+
+        .login-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            text-align: center;
+        }
+
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            background: #eee;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: white;
+        }
+
+        .godly-btn.active { background: var(--godly); }
+        .exclusive-btn.active { background: var(--exclusive); }
+        .event-btn.active { background: var(--event); }
+        .legendary-btn.active { background: var(--legendary); }
+        .all-btn.active { background: var(--primary); }
+
+        .sword-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .sword-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            border-top: 4px solid #eee;
+        }
+
+        .sword-card.godly { border-color: var(--godly); }
+        .sword-card.exclusive { border-color: var(--exclusive); }
+        .sword-card.event { border-color: var(--event); }
+        .sword-card.legendary { border-color: var(--legendary); }
+
+        .sword-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .sword-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .sword-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .admin-panel {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sword-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="login-btn" id="loginBtn" onclick="showLoginModal()">Admin Login</button>
+    <button class="logout-btn admin-only" id="logoutBtn" onclick="logout()">Logout</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Sword Value Tracker</h1>
+            <p>Track values of Godlies, Exclusives, Events and Legendaries</p>
+        </div>
+
+        <div class="admin-panel admin-only">
+            <h3>Admin Controls</h3>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="btn btn-primary" id="addSwordBtn">+ Add Sword</button>
+                <div id="totalValue" style="font-weight: 600;"></div>
+            </div>
+        </div>
+
+        <div class="category-tabs">
+            <button class="tab-btn all-btn active" onclick="filterSwords(&#39;all&#39;)">All Swords</button>
+            <button class="tab-btn godly-btn" onclick="filterSwords(&#39;godly&#39;)">Godlies</button>
+            <button class="tab-btn exclusive-btn" onclick="filterSwords(&#39;exclusive&#39;)">Exclusives</button>
+            <button class="tab-btn event-btn" onclick="filterSwords(&#39;event&#39;)">Events</button>
+            <button class="tab-btn legendary-btn" onclick="filterSwords(&#39;legendary&#39;)">Legendaries</button>
+        </div>
+
+        <div class="sword-grid" id="swordGrid"><div class="sword-card godly">
+                    <img src="./index_files/cupidarrow.png" alt="Cupid&#39;s Arrow" style="max-width:100%; max-height:150px; margin-bottom:10px;">
+                    <h3>Cupid's Arrow</h3>
+                    <div class="sword-value">Value: 115</div>
+                    <div style="color: #e74c3c; font-weight:600;">
+                        Godly
+                    </div>
+                    
+                </div><div class="sword-card godly">
+                    <img src="./index_files/sinofchrist.png" alt="Sin of Christ" style="max-width:100%; max-height:150px; margin-bottom:10px;">
+                    <h3>Sin of Christ</h3>
+                    <div class="sword-value">Value: 100</div>
+                    <div style="color: #e74c3c; font-weight:600;">
+                        Godly
+                    </div>
+                    
+                </div><div class="sword-card godly">
+                    <img src="./index_files/behemoth.png" alt="Behemoth" style="max-width:100%; max-height:150px; margin-bottom:10px;">
+                    <h3>Behemoth</h3>
+                    <div class="sword-value">Value: 80</div>
+                    <div style="color: #e74c3c; font-weight:600;">
+                        Godly
+                    </div>
+                    
+                </div><div class="sword-card godly">
+                    <img src="./index_files/nature.png" alt="Nature&#39;s Embrace" style="max-width:100%; max-height:150px; margin-bottom:10px;">
+                    <h3>Nature's Embrace</h3>
+                    <div class="sword-value">Value: 75</div>
+                    <div style="color: #e74c3c; font-weight:600;">
+                        Godly
+                    </div>
+                    
+                </div><div class="sword-card godly">
+                    <img src="./index_files/stardust.png" alt="Stardust" style="max-width:100%; max-height:150px; margin-bottom:10px;">
+                    <h3>Stardust</h3>
+                    <div class="sword-value">Value: 55</div>
+                    <div style="color: #e74c3c; font-weight:600;">
+                        Godly
+                    </div>
+                    
+                </div><div class="sword-card godly">
+                    <img src="./index_files/empyrean.png" alt="Empyrean" style="max-width:100%; max-height:150px; margin-bottom:10px;">
+                    <h3>Empyrean</h3>
+                    <div class="sword-value">Value: 35</div>
+                    <div style="color: #e74c3c; font-weight:600;">
+                        Godly
+                    </div>
+                    
+                </div><div class="sword-card exclusive">
+                    <img src="./index_files/soulreaper.png" alt="Soul Reaper" style="max-width:100%; max-height:150px; margin-bottom:10px;">
+                    <h3>Soul Reaper</h3>
+                    <div class="sword-value">Value: 15</div>
+                    <div style="color: #9b59b6; font-weight:600;">
+                        Exclusive
+                    </div>
+                    
+                </div><div class="sword-card exclusive">
+                    <img src="./index_files/diadem.png" alt="Diadem" style="max-width:100%; max-height:150px; margin-bottom:10px;">
+                    <h3>Diadem</h3>
+                    <div class="sword-value">Value: 8</div>
+                    <div style="color: #9b59b6; font-weight:600;">
+                        Exclusive
+                    </div>
+                    
+                </div><div class="sword-card exclusive">
+                    <img src="./index_files/angel.png" alt="Angel" style="max-width:100%; max-height:150px; margin-bottom:10px;">
+                    <h3>Angel</h3>
+                    <div class="sword-value">Value: 5</div>
+                    <div style="color: #9b59b6; font-weight:600;">
+                        Exclusive
+                    </div>
+                    
+                </div><div class="sword-card exclusive">
+                    <img src="./index_files/devil.png" alt="Devil" style="max-width:100%; max-height:150px; margin-bottom:10px;">
+                    <h3>Devil</h3>
+                    <div class="sword-value">Value: 5</div>
+                    <div style="color: #9b59b6; font-weight:600;">
+                        Exclusive
+                    </div>
+                    
+                </div></div>
+
+        <!-- Login Modal -->
+        <div class="modal" id="loginModal">
+            <div class="modal-content">
+                <h2>Admin Login</h2>
+                <input type="password" id="adminPassword" placeholder="Enter password">
+                <button class="btn btn-primary" onclick="checkLogin()">Login</button>
+                <p id="loginError" style="color: red; display: none;">Incorrect password</p>
+            </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div class="modal" id="editModal">
+            <div class="modal-content">
+                <h2 id="modalTitle">Add New Sword</h2>
+                <form id="swordForm">
+                    <div class="form-group">
+                        <label>Sword Name</label>
+                        <input type="text" id="swordName" required="">
+                    </div>
+                    <div class="form-group">
+                        <label>Value</label>
+                        <input type="number" id="swordValue" required="">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="swordCategory" required="">
+                            <option value="godly">Godly</option>
+                            <option value="exclusive">Exclusive</option>
+                            <option value="event">Event</option>
+                            <option value="legendary">Legendary</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL (optional)</label>
+                        <input type="text" id="swordImage">
+                    </div>
+                    <div class="sword-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const ADMIN_PASSWORD = "Geo@2009";
+        
+        // Sample data structure
+        let swords = JSON.parse(localStorage.getItem('swords')) || [
+            { name: "Darkbringer", value: 15000, category: "godly", image: "" },
+            { name: "Hallowscythe", value: 12000, category: "exclusive", image: "" },
+            { name: "Candy Cane", value: 8000, category: "event", image: "" },
+            { name: "Icewing", value: 10000, category: "legendary", image: "" }
+        ];
+
+        let currentEditIndex = null;
+        let currentFilter = 'all';
+        let isAdmin = false;
+
+        // Initialize
+        function init() {
+            renderSwords();
+            checkAuthStatus();
+        }
+
+        function checkAuthStatus() {
+            const authToken = localStorage.getItem('swordTrackerAuth');
+            if (authToken === ADMIN_PASSWORD) {
+                enableAdminMode();
+            }
+        }
+
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('adminPassword').focus();
+        }
+
+        function checkLogin() {
+            const input = document.getElementById('adminPassword').value;
+            if (input === ADMIN_PASSWORD) {
+                localStorage.setItem('swordTrackerAuth', ADMIN_PASSWORD);
+                enableAdminMode();
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('adminPassword').value = '';
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        function enableAdminMode() {
+            isAdmin = true;
+            document.body.classList.add('admin-mode');
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'block';
+            updateStats();
+        }
+
+        function logout() {
+            isAdmin = false;
+            localStorage.removeItem('swordTrackerAuth');
+            document.body.classList.remove('admin-mode');
+            document.getElementById('loginBtn').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'none';
+            renderSwords();
+        }
+
+        function renderSwords(filter = currentFilter) {
+            const grid = document.getElementById('swordGrid');
+            grid.innerHTML = '';
+            
+            const filteredSwords = filter === 'all' 
+                ? swords 
+                : swords.filter(sword => sword.category === filter);
+            
+            filteredSwords.forEach((sword, index) => {
+                const card = document.createElement('div');
+                card.className = `sword-card ${sword.category}`;
+                
+                let imageHtml = '';
+                if (sword.image) {
+                    imageHtml = `<img src="${sword.image}" alt="${sword.name}" style="max-width:100%; max-height:150px; margin-bottom:10px;">`;
+                }
+                
+                card.innerHTML = `
+                    ${imageHtml}
+                    <h3>${sword.name}</h3>
+                    <div class="sword-value">Value: ${sword.value}</div>
+                    <div style="color: ${getCategoryColor(sword.category)}; font-weight:600;">
+                        ${sword.category.charAt(0).toUpperCase() + sword.category.slice(1)}
+                    </div>
+                    ${isAdmin ? `
+                    <div class="sword-actions">
+                        <button class="btn btn-primary" onclick="openEditModal(${index})">Edit</button>
+                        <button class="btn btn-secondary" onclick="deleteSword(${index})">Delete</button>
+                    </div>
+                    ` : ''}
+                `;
+                grid.appendChild(card);
+            });
+            
+            if (isAdmin) updateStats();
+        }
+
+        function getCategoryColor(category) {
+            return {
+                godly: '#e74c3c',
+                exclusive: '#9b59b6',
+                event: '#27ae60',
+                legendary: '#f39c12'
+            }[category];
+        }
+
+        function updateStats() {
+            const total = swords.reduce((sum, sword) => sum + Number(sword.value), 0);
+            document.getElementById('totalValue').textContent = `Total Value: ${total}`;
+        }
+
+        function filterSwords(category) {
+            currentFilter = category;
+            renderSwords();
+            
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.${category}-btn`).classList.add('active');
+        }
+
+        function openEditModal(index) {
+            currentEditIndex = index;
+            const modal = document.getElementById('editModal');
+            const form = document.getElementById('swordForm');
+            
+            if (index !== null) {
+                document.getElementById('modalTitle').textContent = 'Edit Sword';
+                const sword = swords[index];
+                document.getElementById('swordName').value = sword.name;
+                document.getElementById('swordValue').value = sword.value;
+                document.getElementById('swordCategory').value = sword.category;
+                document.getElementById('swordImage').value = sword.image || '';
+            } else {
+                document.getElementById('modalTitle').textContent = 'Add New Sword';
+                form.reset();
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('loginModal').style.display = 'none';
+            currentEditIndex = null;
+        }
+
+        function deleteSword(index) {
+            if (confirm(`Delete ${swords[index].name}?`)) {
+                swords.splice(index, 1);
+                localStorage.setItem('swords', JSON.stringify(swords));
+                renderSwords();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('addSwordBtn').addEventListener('click', () => {
+            openEditModal(null);
+        });
+
+        document.getElementById('swordForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const sword = {
+                name: document.getElementById('swordName').value,
+                value: document.getElementById('swordValue').value,
+                category: document.getElementById('swordCategory').value,
+                image: document.getElementById('swordImage').value
+            };
+
+            if (currentEditIndex !== null) {
+                swords[currentEditIndex] = sword;
+            } else {
+                swords.push(sword);
+            }
+            
+            localStorage.setItem('swords', JSON.stringify(swords));
+            renderSwords();
+            closeModal();
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                closeModal();
+            }
+        }
+
+        // Password input on Enter key
+        document.getElementById('adminPassword').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                checkLogin();
+            }
+        });
+
+        // Initialize
+        init();
+    </script>
+
+</body></html>
