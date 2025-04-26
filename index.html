@@ -1,9 +1,29 @@
 <!DOCTYPE html>
-<!-- saved from url=(0044)https://cya7n.github.io/Custom-Duels-Values/ -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sword Value Tracker</title>
+        <meta property="og:title" content="Sword Value Tracker">
+    <meta property="og:description" content="Track values of Godlies, Exclusives, Events and Legendaries">
+    <meta property="og:image" content="https://i.postimg.cc/k4hg7Pt4/output-8-min.png">
+    <meta property="og:url" content="https://cya7n.github.io/Custom-Duels-Values/">
+    <meta property="og:type" content="website">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sword Value Tracker">
+    <meta name="twitter:description" content="Track values of Godlies, Exclusives, Events and Legendaries">
+    <meta name="twitter:image" content="https://i.postimg.cc/k4hg7Pt4/output-8-min.png">
+    
+    <!-- Favicon for browser tab -->
+    <link rel="icon" href="https://i.postimg.cc/d3WYF2kK/output-8-min.png" type="image/png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://i.postimg.cc/k4hg7Pt4/output-8-min.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/k4hg7Pt4/output-8-min.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://i.postimg.cc/k4hg7Pt4/output-8-min.png">
+<link rel="manifest" href="/site.webmanifest">
     <style>
         :root {
             --primary: #2c3e50;
@@ -11,23 +31,52 @@
             --accent: #3498db;
             --godly: #e74c3c;
             --exclusive: #9b59b6;
-            --event: #27ae60; /* Green */
-            --legendary: #f39c12; /* Orange */
+            --event: #27ae60;
+            --legendary: #f39c12;
+            --notes: #e67e22;
+            --cyan-approved: #1abc9c;
+            --gay: #e84393;
+            
+            /* Light mode colors */
+            --bg-color: #f5f5f5;
+            --card-bg: white;
+            --text-color: #2c3e50;
+            --border-color: #eee;
+            --shadow-color: rgba(0,0,0,0.05);
+            --modal-bg: white;
+            --input-bg: white;
+            --input-border: #ddd;
+            --admin-panel-bg: #f8f9fa;
+        }
+
+        .dark-mode {
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #f0f0f0;
+            --border-color: #444;
+            --shadow-color: rgba(0,0,0,0.2);
+            --modal-bg: #333;
+            --input-bg: #444;
+            --input-border: #555;
+            --admin-panel-bg: #252525;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
-            background: #f5f5f5;
-            color: var(--primary);
+            background: var(--bg-color);
+            color: var(--text-color);
             line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+            overflow-x: hidden;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            padding-top: 100px;
         }
 
         .admin-only {
@@ -38,41 +87,105 @@
             display: block;
         }
 
-        .login-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 8px 16px;
+        /* Fixed header styles */
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-color);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .view-toggle {
+            background: var(--border-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-color);
+        }
+
+        .login-btn, .logout-btn, .theme-toggle {
+            padding: 8px 12px;
             background: var(--accent);
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            display: none;
+        }
+
+        .theme-toggle {
+            background: var(--secondary);
         }
 
         .header {
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #eee;
+            border-bottom: 2px solid var(--border-color);
             text-align: center;
         }
 
         .category-tabs {
             display: flex;
-            justify-content: center;
             gap: 10px;
             margin-bottom: 25px;
-            flex-wrap: wrap;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+
+        .category-tabs::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .category-tabs::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 3px;
         }
 
         .tab-btn {
-            padding: 10px 20px;
+            padding: 10px 15px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            background: #eee;
+            background: var(--border-color);
             transition: all 0.3s;
+            color: var(--text-color);
+            flex-shrink: 0;
         }
 
         .tab-btn.active {
@@ -85,19 +198,85 @@
         .legendary-btn.active { background: var(--legendary); }
         .all-btn.active { background: var(--primary); }
 
+        /* Grid View */
         .sword-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
         }
 
+        /* List View - Simplified */
+        .sword-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sword-list .sword-card {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--card-bg);
+            border-radius: 6px;
+            border-top: 4px solid var(--border-color);
+        }
+
+        .sword-list .sword-card img {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            object-fit: contain;
+        }
+
+        .sword-list .sword-info {
+            flex: 1;
+        }
+
+        .sword-list .sword-info h3 {
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .sword-list .sword-meta {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .sword-list .sword-value {
+            font-weight: bold;
+        }
+
+        .sword-list .sword-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Grid Card Styles */
         .sword-card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-            border-top: 4px solid #eee;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-top: 4px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .sword-card img {
+            max-width: 100%;
+            height: auto;
+            max-height: 150px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 10px;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+            transition: filter 0.3s;
+        }
+
+        .dark-mode .sword-card img {
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.2));
         }
 
         .sword-card.godly { border-color: var(--godly); }
@@ -107,6 +286,7 @@
 
         .sword-card:hover {
             transform: translateY(-3px);
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
 
         .sword-value {
@@ -150,16 +330,18 @@
             background: rgba(0,0,0,0.5);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
         }
 
         .modal-content {
-            background: white;
+            background: var(--modal-bg);
             padding: 30px;
             border-radius: 10px;
             width: 90%;
             max-width: 500px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .form-group {
@@ -172,47 +354,304 @@
             font-weight: 500;
         }
 
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
+            background: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
             border-radius: 6px;
             box-sizing: border-box;
         }
 
         .admin-panel {
-            background: #f8f9fa;
+            background: var(--admin-panel-bg);
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
         }
 
-        .logout-btn {
-            position: absolute;
-            top: 20px;
+        /* Notes Panel Styles */
+        .notes-container {
+            position: fixed;
+            bottom: 20px;
             right: 20px;
-            padding: 8px 16px;
-            background: #e74c3c;
+            z-index: 1000;
+        }
+
+        .notes-toggle {
+            background: var(--notes);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2em;
             cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .notes-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .notes-panel {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            width: 300px;
+            max-height: 400px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            padding: 15px;
+            overflow-y: auto;
+            display: none;
+            border-left: 4px solid var(--notes);
+        }
+
+        .notes-panel h3 {
+            margin-top: 0;
+            color: var(--notes);
+        }
+
+        .notes-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        /* Sword Details Modal - Improved for Tablets */
+        .sword-details {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sword-details-content {
+            background: var(--modal-bg);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .close-details {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        .sword-details-img {
+            max-width: 100%;
+            max-height: 200px;
+            display: block;
+            margin: 0 auto 20px;
+            border-radius: 5px;
+        }
+
+        .sword-details-name {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .sword-details-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .sword-details-category {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .sword-details-info {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .sword-details-info strong {
+            color: var(--accent);
+        }
+
+        .sword-details-info div {
+            margin-bottom: 10px;
+        }
+
+        .cyan-approved {
+            color: var(--cyan-approved);
+            font-weight: bold;
+        }
+
+        .gay {
+            color: var(--gay);
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 768px) {
-            .sword-grid {
-                grid-template-columns: 1fr;
+            .container {
+                padding-top: 90px;
             }
+            
+            .sword-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 12px;
+            }
+            
+            .sword-card {
+                padding: 12px;
+                min-height: auto;
+            }
+            
+            .sword-card img {
+                max-height: 100px;
+                margin-bottom: 8px;
+            }
+            
+            .sword-value {
+                font-size: 1.2em;
+            }
+            
+            .tab-btn {
+                padding: 8px 12px;
+                font-size: 0.85em;
+            }
+            
+            .admin-panel {
+                padding: 10px;
+            }
+
+            .notes-panel {
+                width: 250px;
+                max-height: 300px;
+            }
+
+            .sword-details-content {
+                padding: 20px;
+            }
+
+            .sword-details-img {
+                max-height: 150px;
+            }
+
+            .sword-list .sword-card {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .sword-list .sword-card img {
+                margin-right: 15px;
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sword-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .fixed-header {
+                padding: 10px;
+            }
+            
+            .header-buttons {
+                gap: 5px;
+            }
+            
+            .login-btn, .logout-btn, .theme-toggle, .view-toggle {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+
+            .notes-container {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .notes-panel {
+                width: 200px;
+                max-height: 250px;
+            }
+            
+            .notes-toggle {
+                width: 40px;
+                height: 40px;
+                font-size: 1em;
+            }
+
+            .sword-details-content {
+                padding: 15px;
+            }
+
+            .sword-details-name {
+                font-size: 1.5em;
+            }
+
+            .sword-list .sword-card {
+                padding: 10px;
+            }
+        }
+
+        .copyright-notice {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--secondary);
+            font-size: 0.9em;
+            border-top: 1px solid var(--border-color);
         }
     </style>
 </head>
 <body>
-    <button class="login-btn" id="loginBtn" onclick="showLoginModal()">Admin Login</button>
-    <button class="logout-btn admin-only" id="logoutBtn" onclick="logout()">Logout</button>
+    <!-- Fixed Header -->
+<div class="fixed-header">
+    <div class="header-content">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="https://i.postimg.cc/k4hg7Pt4/output-8-min.png" alt="Logo" style="height: 40px; width: auto;">
+            <h1 style="margin: 0; font-size: 1.5em;">Sword Value Tracker</h1>
+        </div>
+        <div class="header-buttons">
+                <button class="view-toggle" id="viewToggle">
+                    <span id="viewIcon">☰</span> <span id="viewText">List</span>
+                </button>
+                <button class="theme-toggle" id="themeToggle">Dark Mode</button>
+                <button class="login-btn" id="loginBtn">Admin</button>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </div>
     
     <div class="container">
         <div class="header">
-            <h1>Sword Value Tracker</h1>
             <p>Track values of Godlies, Exclusives, Events and Legendaries</p>
         </div>
 
@@ -225,101 +664,44 @@
         </div>
 
         <div class="category-tabs">
-            <button class="tab-btn all-btn active" onclick="filterSwords(&#39;all&#39;)">All Swords</button>
-            <button class="tab-btn godly-btn" onclick="filterSwords(&#39;godly&#39;)">Godlies</button>
-            <button class="tab-btn exclusive-btn" onclick="filterSwords(&#39;exclusive&#39;)">Exclusives</button>
-            <button class="tab-btn event-btn" onclick="filterSwords(&#39;event&#39;)">Events</button>
-            <button class="tab-btn legendary-btn" onclick="filterSwords(&#39;legendary&#39;)">Legendaries</button>
+            <button class="tab-btn all-btn active" data-filter="all">All Swords</button>
+            <button class="tab-btn godly-btn" data-filter="godly">Godlies</button>
+            <button class="tab-btn exclusive-btn" data-filter="exclusive">Exclusives</button>
+            <button class="tab-btn event-btn" data-filter="event">Events</button>
+            <button class="tab-btn legendary-btn" data-filter="legendary">Legendaries</button>
         </div>
 
-        <div class="sword-grid" id="swordGrid"><div class="sword-card godly">
-                    <img src="./index_files/cupidarrow.png" alt="Cupid&#39;s Arrow" style="max-width:100%; max-height:150px; margin-bottom:10px;">
-                    <h3>Cupid's Arrow</h3>
-                    <div class="sword-value">Value: 115</div>
-                    <div style="color: #e74c3c; font-weight:600;">
-                        Godly
-                    </div>
-                    
-                </div><div class="sword-card godly">
-                    <img src="./index_files/sinofchrist.png" alt="Sin of Christ" style="max-width:100%; max-height:150px; margin-bottom:10px;">
-                    <h3>Sin of Christ</h3>
-                    <div class="sword-value">Value: 100</div>
-                    <div style="color: #e74c3c; font-weight:600;">
-                        Godly
-                    </div>
-                    
-                </div><div class="sword-card godly">
-                    <img src="./index_files/behemoth.png" alt="Behemoth" style="max-width:100%; max-height:150px; margin-bottom:10px;">
-                    <h3>Behemoth</h3>
-                    <div class="sword-value">Value: 80</div>
-                    <div style="color: #e74c3c; font-weight:600;">
-                        Godly
-                    </div>
-                    
-                </div><div class="sword-card godly">
-                    <img src="./index_files/nature.png" alt="Nature&#39;s Embrace" style="max-width:100%; max-height:150px; margin-bottom:10px;">
-                    <h3>Nature's Embrace</h3>
-                    <div class="sword-value">Value: 75</div>
-                    <div style="color: #e74c3c; font-weight:600;">
-                        Godly
-                    </div>
-                    
-                </div><div class="sword-card godly">
-                    <img src="./index_files/stardust.png" alt="Stardust" style="max-width:100%; max-height:150px; margin-bottom:10px;">
-                    <h3>Stardust</h3>
-                    <div class="sword-value">Value: 55</div>
-                    <div style="color: #e74c3c; font-weight:600;">
-                        Godly
-                    </div>
-                    
-                </div><div class="sword-card godly">
-                    <img src="./index_files/empyrean.png" alt="Empyrean" style="max-width:100%; max-height:150px; margin-bottom:10px;">
-                    <h3>Empyrean</h3>
-                    <div class="sword-value">Value: 35</div>
-                    <div style="color: #e74c3c; font-weight:600;">
-                        Godly
-                    </div>
-                    
-                </div><div class="sword-card exclusive">
-                    <img src="./index_files/soulreaper.png" alt="Soul Reaper" style="max-width:100%; max-height:150px; margin-bottom:10px;">
-                    <h3>Soul Reaper</h3>
-                    <div class="sword-value">Value: 15</div>
-                    <div style="color: #9b59b6; font-weight:600;">
-                        Exclusive
-                    </div>
-                    
-                </div><div class="sword-card exclusive">
-                    <img src="./index_files/diadem.png" alt="Diadem" style="max-width:100%; max-height:150px; margin-bottom:10px;">
-                    <h3>Diadem</h3>
-                    <div class="sword-value">Value: 8</div>
-                    <div style="color: #9b59b6; font-weight:600;">
-                        Exclusive
-                    </div>
-                    
-                </div><div class="sword-card exclusive">
-                    <img src="./index_files/angel.png" alt="Angel" style="max-width:100%; max-height:150px; margin-bottom:10px;">
-                    <h3>Angel</h3>
-                    <div class="sword-value">Value: 5</div>
-                    <div style="color: #9b59b6; font-weight:600;">
-                        Exclusive
-                    </div>
-                    
-                </div><div class="sword-card exclusive">
-                    <img src="./index_files/devil.png" alt="Devil" style="max-width:100%; max-height:150px; margin-bottom:10px;">
-                    <h3>Devil</h3>
-                    <div class="sword-value">Value: 5</div>
-                    <div style="color: #9b59b6; font-weight:600;">
-                        Exclusive
-                    </div>
-                    
-                </div></div>
+        <div class="sword-grid" id="swordGrid">
+            <!-- Sword cards will be rendered here -->
+        </div>
+
+        <div class="sword-list" id="swordList" style="display: none;">
+            <!-- Sword list will be rendered here -->
+        </div>
+
+        <div class="copyright-notice">
+            Created by @cya7n (Discord ID: 899626902648684584)
+        </div>
+
+        <!-- Notes Panel -->
+        <div class="notes-container">
+            <div class="notes-panel" id="notesPanel">
+                <h3>Special Notes</h3>
+                <p>1. Most legs are valued at 1 in Godly trades. Only the rarer legs can be considered as more.</p>
+                <p>2. Very low serials (around 1-0) can be valued at 2x more value than the original sword's value or even higher.</p>
+                <p>3. All looks and effects ratings are based solely on MY opinion, and if I think it is worth its value only based on looks and effects.</p>
+                <p>4. If you are experiencing issues such as images not loading or data feeling wrong or outdated, please try to delete the website data (niew site information aka the filter button next to the url > cookie and site data > delete site data) before reaching out to me on Discord (@cya7n).</p>
+                <p>5. If you have any suggestions, please dm @cya7n on Discord.</p>
+            </div>
+            <button class="notes-toggle" id="notesToggle">📝</button>
+        </div>
 
         <!-- Login Modal -->
         <div class="modal" id="loginModal">
             <div class="modal-content">
                 <h2>Admin Login</h2>
                 <input type="password" id="adminPassword" placeholder="Enter password">
-                <button class="btn btn-primary" onclick="checkLogin()">Login</button>
+                <button class="btn btn-primary" id="confirmLoginBtn">Login</button>
                 <p id="loginError" style="color: red; display: none;">Incorrect password</p>
             </div>
         </div>
@@ -331,15 +713,15 @@
                 <form id="swordForm">
                     <div class="form-group">
                         <label>Sword Name</label>
-                        <input type="text" id="swordName" required="">
+                        <input type="text" id="swordName" required>
                     </div>
                     <div class="form-group">
                         <label>Value</label>
-                        <input type="number" id="swordValue" required="">
+                        <input type="number" id="swordValue" required step="0.1">
                     </div>
                     <div class="form-group">
                         <label>Category</label>
-                        <select id="swordCategory" required="">
+                        <select id="swordCategory" required>
                             <option value="godly">Godly</option>
                             <option value="exclusive">Exclusive</option>
                             <option value="event">Event</option>
@@ -350,11 +732,58 @@
                         <label>Image URL (optional)</label>
                         <input type="text" id="swordImage">
                     </div>
+                    <div class="form-group">
+                        <label>Exist Count (optional)</label>
+                        <input type="number" id="swordExistCount" placeholder="Estimated number in existence">
+                    </div>
+                    <div class="form-group">
+                        <label>Looks Approval</label>
+                        <select id="swordLooksApproval">
+                            <option value="">Not specified</option>
+                            <option value="cyan">Cyan Approved</option>
+                            <option value="gay">Gay</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Death Effects Approval</label>
+                        <select id="swordDeathEffectsApproval">
+                            <option value="">Not specified</option>
+                            <option value="cyan">Cyan Approved</option>
+                            <option value="gay">Gay</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Notes (optional)</label>
+                        <textarea id="swordNotes" rows="3"></textarea>
+                    </div>
                     <div class="sword-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Sword Details Modal -->
+        <div class="sword-details" id="swordDetailsModal">
+            <div class="sword-details-content">
+                <span class="close-details" id="closeDetails">&times;</span>
+                <img id="detailsImg" class="sword-details-img" src="" alt="" onerror="this.style.display='none'">
+                <h2 class="sword-details-name" id="detailsName"></h2>
+                <div class="sword-details-value" id="detailsValue"></div>
+                <div class="sword-details-category" id="detailsCategory"></div>
+                
+                <div class="sword-details-info">
+                    <div id="detailsExistCount"></div>
+                    <div id="detailsLooksApproval"></div>
+                    <div id="detailsDeathEffectsApproval"></div>
+                    <div id="detailsNotes"></div>
+                </div>
+                
+                <div class="sword-actions admin-only" id="detailsAdminActions">
+                    <button class="btn btn-primary" id="editDetailsBtn">Edit</button>
+                    <button class="btn btn-secondary" id="deleteDetailsBtn">Delete</button>
+                </div>
             </div>
         </div>
     </div>
@@ -363,27 +792,392 @@
         // Configuration
         const ADMIN_PASSWORD = "Geo@2009";
         
-        // Sample data structure
-        let swords = JSON.parse(localStorage.getItem('swords')) || [
-            { name: "Darkbringer", value: 15000, category: "godly", image: "" },
-            { name: "Hallowscythe", value: 12000, category: "exclusive", image: "" },
-            { name: "Candy Cane", value: 8000, category: "event", image: "" },
-            { name: "Icewing", value: 10000, category: "legendary", image: "" }
+        // Sword data - now hardcoded instead of using localStorage
+        const swords = [
+            { 
+                name: "Cupid's Arrow", 
+                value: 130, 
+                category: "godly", 
+                image: "https://i.postimg.cc/4NCRTxFM/cupidarrow.png",
+                existCount: 60,
+                looksApproval: "gay",
+                deathEffectsApproval: "gay",
+                notes: "It has high value because of its scarcity. Valentines",
+            },
+            { 
+                name: "SoC", 
+                value: 105, 
+                category: "godly", 
+                image: "https://i.postimg.cc/4NRqSFYR/sinofchrist.png",
+                existCount: 190,
+                looksApproval: "cyan",
+                deathEffectsApproval: "gay",
+                notes: "It has duel swords, and the effect has been revamped recently.",
+            },
+            { 
+                name: "Nature's Embrace", 
+                value: 85, 
+                category: "godly", 
+                image: "https://i.postimg.cc/6qnSQC1P/nature.png",
+                existCount: 100,
+                looksApproval: "cyan",
+                deathEffectsApproval: "gay",
+                notes: "New",
+            },
+            { 
+                name: "Behemoth", 
+                value: 80, 
+                category: "godly", 
+                image: "https://i.postimg.cc/BvZGw7wn/behemoth.png",
+                existCount: 210,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan",
+                notes: "Halloween",
+            },
+            { 
+                name: "Stardust", 
+                value: 55, 
+                category: "godly", 
+                image: "https://i.postimg.cc/0NjBwTBD/stardust.png",
+                existCount: 210,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan"
+            },
+            { 
+                name: "Empyrean", 
+                value: 32, 
+                category: "godly", 
+                image: "https://i.postimg.cc/0yfTmd2R/empyrean.png",
+                existCount: 370,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan"
+            },
+            { 
+                name: "Soul Reaper", 
+                value: 15, 
+                category: "exclusive", 
+                image: "https://i.postimg.cc/rw8b80Gh/soulreaper.png",
+                existCount: 650,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan",
+                notes: "Considered to be 12 by some due to its fluctuating state.",
+            },
+            { 
+                name: "Diadem", 
+                value: 8, 
+                category: "exclusive", 
+                image: "https://i.postimg.cc/qv4fzZrx/diadem.png",
+                existCount: 1400,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan"
+            },
+            { 
+                name: "Angel", 
+                value: 5, 
+                category: "exclusive", 
+                image: "https://i.postimg.cc/4NtZK99s/angel.png",
+                existCount: 800,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan",
+                notes: "New",
+            },
+            { 
+                name: "Devil", 
+                value: 5, 
+                category: "exclusive", 
+                image: "https://i.postimg.cc/Fsj5FXMK/devil.png",
+                existCount: 800,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan",
+                notes: "New",
+            },
+            { 
+                name: "Boogie Bomb", 
+                value: 3.5, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/vBkFTY84/boogiebomb.png",
+                existCount: 1700,
+                looksApproval: "gay",
+                deathEffectsApproval: "gay",
+                notes: "New years, scarce",
+            },
+            { 
+                name: "Bloodthorn", 
+                value: 3, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/Vvtybx5D/bloodthorn.png",
+                existCount: 3110,
+                looksApproval: "gay",
+                deathEffectsApproval: "gay",
+                notes: "Halloween",
+            },
+            { 
+                name: "Bladeless Swordsman", 
+                value: 2.8, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/63yxB2Ks/bladeless.png",
+                existCount: 5100,
+                looksApproval: "cyan",
+                deathEffectsApproval: "gay",
+                notes: "Halloween",
+            },
+            { 
+                name: "Harbinger", 
+                value: 2.5, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/GpmZj8HB/harbinger.png",
+                existCount: 5200,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan",
+                notes: "Halloween",
+            },
+            { 
+                name: "Undead: Vengeance", 
+                value: 2.5, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/DwBNmvB7/zomb.png",
+                existCount: 3700,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan",
+                notes: "Halloween",
+            },
+            { 
+                name: "Confille", 
+                value: 2.5, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/NG2vVHbm/confille.png",
+                existCount: 2000,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan",
+                notes: "Valentines",
+            },
+            { 
+                name: "Skeleton Dance", 
+                value: 2.2, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/hP86Wbmz/skeletondance.png",
+                existCount: 4900,
+                looksApproval: "gay",
+                deathEffectsApproval: "gay",
+                notes: "Halloween",
+            },
+            { 
+                name: "Aura", 
+                value: 2, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/rwNkj2jH/aura.png",
+                existCount: 2100,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan"
+            },
+            { 
+                name: "Voidswirl", 
+                value: 1.8, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/JzvbpShb/voidswirl.png",
+                existCount: 3200,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan"
+            },
+            { 
+                name: "Golden Sleigh", 
+                value: 1.8, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/GmHFJbbL/goldensleigh.png",
+                existCount: 4100,
+                looksApproval: "gay",
+                deathEffectsApproval: "cyan"
+            },
+            { 
+                name: "Blackhole", 
+                value: 1.5, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/5tPMc5Zq/blackhole.png",
+                existCount: 3200,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan"
+            },
+            { 
+                name: "Low Tide", 
+                value: 1.5, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/HxfRH635/lowtide.png",
+                existCount: 2000,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan",
+                notes: "New",
+            },
+            { 
+                name: "Rose Thunderbolt", 
+                value: 1.5, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/ZYdXjhKL/rose.png",
+                existCount: 3600,
+                looksApproval: "gay",
+                deathEffectsApproval: "gay",
+                notes: "Well it might be worth more than thunder if you are a girl lol...",
+            },
+            { 
+                name: "Meteor", 
+                value: 1.5, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/sxjSBrnR/meteor.png",
+                existCount: 3200,
+                looksApproval: "gay",
+                deathEffectsApproval: "cyan"
+            },
+            { 
+                name: "Sunblade", 
+                value: 1.5, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/Hx4Xsx92/sunblade.png",
+                existCount: 2000,
+                looksApproval: "gay",
+                deathEffectsApproval: "gay",
+                notes: "New",
+            },
+            { 
+                name: "Baphomet", 
+                value: 1.3, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/1Rbs5H4v/baphomet.png",
+                existCount: 4300,
+                looksApproval: "gay",
+                deathEffectsApproval: "gay"
+            },
+            { 
+                name: "Icicle", 
+                value: 1, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/vB1kpJ7b/icicle.png",
+                existCount: 5600,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan"
+            },
+            { 
+                name: "Thunderbolt", 
+                value: 1, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/jj1kQMp9/thunderbolt.png",
+                existCount: 8200,
+                looksApproval: "cyan",
+                deathEffectsApproval: "cyan"
+            },
+            { 
+                name: "Hearth", 
+                value: 0.9, 
+                category: "legendary", 
+                image: "https://i.postimg.cc/wB4n4qmw/hearth.png",
+                existCount: 12600,
+                looksApproval: "gay",
+                deathEffectsApproval: "gay"
+            }
+            { 
+                name: "robloxmasterguy13", 
+                value: 0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001, 
+                category: "event", 
+                image: "https://i.postimg.cc/QMmMnT8c/no-Filter-1.png",
+                existCount: "he's gay",
+                looksApproval: "gay",
+                deathEffectsApproval: "gay"
+            }
         ];
 
         let currentEditIndex = null;
         let currentFilter = 'all';
         let isAdmin = false;
+        let currentDetailsIndex = null;
+        let filteredSwords = [];
+        let isListView = false;
 
-        // Initialize
-        function init() {
-            renderSwords();
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for saved theme preference
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeToggle').textContent = 'Light Mode';
+            }
+            
+            // Check for saved view preference
+            if (localStorage.getItem('viewMode') === 'list') {
+                toggleView();
+            }
+            
+            // Set up event listeners
+            document.getElementById('loginBtn').addEventListener('click', showLoginModal);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('viewToggle').addEventListener('click', toggleView);
+            document.getElementById('addSwordBtn').addEventListener('click', () => openEditModal(null));
+            document.getElementById('confirmLoginBtn').addEventListener('click', checkLogin);
+            document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
+            document.getElementById('swordForm').addEventListener('submit', handleFormSubmit);
+            document.getElementById('notesToggle').addEventListener('click', toggleNotes);
+            document.getElementById('closeDetails').addEventListener('click', closeDetailsModal);
+            document.getElementById('editDetailsBtn').addEventListener('click', editCurrentDetails);
+            document.getElementById('deleteDetailsBtn').addEventListener('click', deleteCurrentDetails);
+            
+            // Tab filter buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterSwords(btn.dataset.filter);
+                });
+            });
+
+            // Password input on Enter key
+            document.getElementById('adminPassword').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') checkLogin();
+            });
+
+            // Close modal when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModal();
+                });
+            });
+
+            // Close details modal when clicking outside
+            document.getElementById('swordDetailsModal').addEventListener('click', function(e) {
+                if (e.target === this) closeDetailsModal();
+            });
+
+            // Initial render
+            filterSwords('all');
             checkAuthStatus();
+        });
+
+        function toggleNotes() {
+            document.getElementById('notesPanel').classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+            document.getElementById('themeToggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+        }
+
+        function toggleView() {
+            isListView = !isListView;
+            localStorage.setItem('viewMode', isListView ? 'list' : 'grid');
+            
+            if (isListView) {
+                document.getElementById('swordGrid').style.display = 'none';
+                document.getElementById('swordList').style.display = 'flex';
+                document.getElementById('viewIcon').textContent = '⏹';
+                document.getElementById('viewText').textContent = 'Grid';
+            } else {
+                document.getElementById('swordGrid').style.display = 'grid';
+                document.getElementById('swordList').style.display = 'none';
+                document.getElementById('viewIcon').textContent = '☰';
+                document.getElementById('viewText').textContent = 'List';
+            }
+            
+            renderSwords();
         }
 
         function checkAuthStatus() {
-            const authToken = localStorage.getItem('swordTrackerAuth');
-            if (authToken === ADMIN_PASSWORD) {
+            if (localStorage.getItem('swordTrackerAuth') === ADMIN_PASSWORD) {
                 enableAdminMode();
             }
         }
@@ -400,6 +1194,7 @@
                 enableAdminMode();
                 document.getElementById('loginModal').style.display = 'none';
                 document.getElementById('adminPassword').value = '';
+                document.getElementById('loginError').style.display = 'none';
             } else {
                 document.getElementById('loginError').style.display = 'block';
             }
@@ -411,6 +1206,7 @@
             document.getElementById('loginBtn').style.display = 'none';
             document.getElementById('logoutBtn').style.display = 'block';
             updateStats();
+            renderSwords();
         }
 
         function logout() {
@@ -422,50 +1218,205 @@
             renderSwords();
         }
 
-        function renderSwords(filter = currentFilter) {
+        function renderSwords() {
             const grid = document.getElementById('swordGrid');
-            grid.innerHTML = '';
+            const list = document.getElementById('swordList');
             
-            const filteredSwords = filter === 'all' 
-                ? swords 
-                : swords.filter(sword => sword.category === filter);
+            grid.innerHTML = '';
+            list.innerHTML = '';
             
             filteredSwords.forEach((sword, index) => {
-                const card = document.createElement('div');
-                card.className = `sword-card ${sword.category}`;
-                
-                let imageHtml = '';
-                if (sword.image) {
-                    imageHtml = `<img src="${sword.image}" alt="${sword.name}" style="max-width:100%; max-height:150px; margin-bottom:10px;">`;
+                if (isListView) {
+                    renderSwordListItem(list, sword, index);
+                } else {
+                    renderSwordCard(grid, sword, index);
                 }
-                
-                card.innerHTML = `
-                    ${imageHtml}
-                    <h3>${sword.name}</h3>
-                    <div class="sword-value">Value: ${sword.value}</div>
-                    <div style="color: ${getCategoryColor(sword.category)}; font-weight:600;">
-                        ${sword.category.charAt(0).toUpperCase() + sword.category.slice(1)}
-                    </div>
-                    ${isAdmin ? `
-                    <div class="sword-actions">
-                        <button class="btn btn-primary" onclick="openEditModal(${index})">Edit</button>
-                        <button class="btn btn-secondary" onclick="deleteSword(${index})">Delete</button>
-                    </div>
-                    ` : ''}
-                `;
-                grid.appendChild(card);
             });
             
             if (isAdmin) updateStats();
         }
 
+        function renderSwordCard(container, sword, index) {
+            const card = document.createElement('div');
+            card.className = `sword-card ${sword.category}`;
+            
+            let imageHtml = sword.image 
+                ? `<img src="${sword.image}" alt="${sword.name}" style="max-width:100%; max-height:150px; margin-bottom:10px;" onerror="this.style.display='none'">` 
+                : '';
+            
+            card.innerHTML = `
+                ${imageHtml}
+                <h3>${sword.name}</h3>
+                <div class="sword-value">Value: ${sword.value}</div>
+                <div style="color: ${getCategoryColor(sword.category)}; font-weight:600;">
+                    ${sword.category.charAt(0).toUpperCase() + sword.category.slice(1)}
+                </div>
+                ${isAdmin ? `
+                <div class="sword-actions">
+                    <button class="btn btn-primary" data-index="${index}">Edit</button>
+                    <button class="btn btn-secondary" data-index="${index}">Delete</button>
+                </div>
+                ` : ''}
+            `;
+            
+            // Add click event to show details
+            card.addEventListener('click', (e) => {
+                // Don't trigger if clicking on admin buttons
+                if (!e.target.classList.contains('btn')) {
+                    showSwordDetails(index);
+                }
+            });
+            
+            // Add event listeners for admin buttons
+            if (isAdmin) {
+                card.querySelector('.btn-primary').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openEditModal(index, true);
+                });
+                card.querySelector('.btn-secondary').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteSword(index, true);
+                });
+            }
+            
+            container.appendChild(card);
+        }
+
+        function renderSwordListItem(container, sword, index) {
+            const card = document.createElement('div');
+            card.className = `sword-card ${sword.category}`;
+            
+            let imageHtml = sword.image 
+                ? `<img src="${sword.image}" alt="${sword.name}" width="50" height="50" onerror="this.style.display='none'">` 
+                : '';
+            
+            card.innerHTML = `
+                ${imageHtml}
+                <div class="sword-info" style="flex: 1;">
+                    <h3 style="margin: 0; font-size: 1em;">${sword.name}</h3>
+                    <div class="sword-meta">
+                        <div style="color: ${getCategoryColor(sword.category)};">
+                            ${sword.category.charAt(0).toUpperCase() + sword.category.slice(1)}
+                        </div>
+                        <div class="sword-value">${sword.value}</div>
+                    </div>
+                </div>
+                ${isAdmin ? `
+                <div class="sword-actions">
+                    <button class="btn btn-primary" data-index="${index}">Edit</button>
+                    <button class="btn btn-secondary" data-index="${index}">Delete</button>
+                </div>
+                ` : ''}
+            `;
+            
+            // Add click event to show details
+            card.addEventListener('click', (e) => {
+                // Don't trigger if clicking on admin buttons
+                if (!e.target.classList.contains('btn')) {
+                    showSwordDetails(index);
+                }
+            });
+            
+            // Add event listeners for admin buttons
+            if (isAdmin) {
+                card.querySelector('.btn-primary').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openEditModal(index, true);
+                });
+                card.querySelector('.btn-secondary').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteSword(index, true);
+                });
+            }
+            
+            container.appendChild(card);
+        }
+
+        function showSwordDetails(index) {
+            currentDetailsIndex = index;
+            const sword = filteredSwords[index];
+            const modal = document.getElementById('swordDetailsModal');
+            
+            document.getElementById('detailsName').textContent = sword.name;
+            document.getElementById('detailsValue').textContent = `Value: ${sword.value}`;
+            
+            // Set image or placeholder
+            const imgElement = document.getElementById('detailsImg');
+            if (sword.image) {
+                imgElement.src = sword.image;
+                imgElement.style.display = 'block';
+            } else {
+                imgElement.style.display = 'none';
+            }
+            
+            // Set category with color
+            const categoryElement = document.getElementById('detailsCategory');
+            categoryElement.textContent = sword.category.charAt(0).toUpperCase() + sword.category.slice(1);
+            categoryElement.style.backgroundColor = getCategoryColor(sword.category);
+            
+            // Set additional info - now properly shows on tablets
+            document.getElementById('detailsExistCount').innerHTML = sword.existCount 
+                ? `<strong>Exist Count:</strong> ~${sword.existCount}` 
+                : '';
+            
+            document.getElementById('detailsLooksApproval').innerHTML = sword.looksApproval 
+                ? `<strong>Looks:</strong> <span class="${sword.looksApproval}">${formatApproval(sword.looksApproval)}</span>` 
+                : '';
+            
+            document.getElementById('detailsDeathEffectsApproval').innerHTML = sword.deathEffectsApproval 
+                ? `<strong>Death Effects:</strong> <span class="${sword.deathEffectsApproval}">${formatApproval(sword.deathEffectsApproval)}</span>` 
+                : '';
+            
+            document.getElementById('detailsNotes').innerHTML = sword.notes 
+                ? `<strong>Notes:</strong> ${sword.notes}` 
+                : '';
+            
+            // Show admin buttons if in admin mode
+            document.getElementById('detailsAdminActions').style.display = isAdmin ? 'flex' : 'none';
+            
+            modal.style.display = 'flex';
+        }
+
+        function formatApproval(approval) {
+            if (approval === 'cyan') return 'Cyan Approved';
+            if (approval === 'gay') return 'Gay';
+            return approval;
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('swordDetailsModal').style.display = 'none';
+            currentDetailsIndex = null;
+        }
+
+        function editCurrentDetails() {
+            if (currentDetailsIndex !== null) {
+                closeDetailsModal();
+                // Find the original index in the main swords array
+                const swordToEdit = filteredSwords[currentDetailsIndex];
+                const originalIndex = swords.findIndex(s => s.name === swordToEdit.name);
+                openEditModal(originalIndex);
+            }
+        }
+
+        function deleteCurrentDetails() {
+            if (currentDetailsIndex !== null) {
+                const swordToDelete = filteredSwords[currentDetailsIndex];
+                if (confirm(`Delete ${swordToDelete.name}?`)) {
+                    // Find the original index in the main swords array
+                    const originalIndex = swords.findIndex(s => s.name === swordToDelete.name);
+                    deleteSword(originalIndex);
+                }
+            }
+        }
+
         function getCategoryColor(category) {
-            return {
+            const colors = {
                 godly: '#e74c3c',
                 exclusive: '#9b59b6',
                 event: '#27ae60',
                 legendary: '#f39c12'
-            }[category];
+            };
+            return colors[category] || '#7f8c8d';
         }
 
         function updateStats() {
@@ -475,28 +1426,47 @@
 
         function filterSwords(category) {
             currentFilter = category;
+            filteredSwords = category === 'all' 
+                ? [...swords] 
+                : swords.filter(sword => sword.category === category);
+            
             renderSwords();
             
             // Update active tab
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.${category}-btn`).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.filter === category) {
+                    btn.classList.add('active');
+                }
+            });
         }
 
-        function openEditModal(index) {
+        function openEditModal(index, isFilteredIndex = false) {
             currentEditIndex = index;
             const modal = document.getElementById('editModal');
-            const form = document.getElementById('swordForm');
             
             if (index !== null) {
                 document.getElementById('modalTitle').textContent = 'Edit Sword';
-                const sword = swords[index];
+                let sword;
+                if (isFilteredIndex) {
+                    sword = filteredSwords[index];
+                    // Find the original index in the main swords array
+                    currentEditIndex = swords.findIndex(s => s.name === sword.name);
+                } else {
+                    sword = swords[index];
+                }
+                
                 document.getElementById('swordName').value = sword.name;
                 document.getElementById('swordValue').value = sword.value;
                 document.getElementById('swordCategory').value = sword.category;
                 document.getElementById('swordImage').value = sword.image || '';
+                document.getElementById('swordExistCount').value = sword.existCount || '';
+                document.getElementById('swordLooksApproval').value = sword.looksApproval || '';
+                document.getElementById('swordDeathEffectsApproval').value = sword.deathEffectsApproval || '';
+                document.getElementById('swordNotes').value = sword.notes || '';
             } else {
                 document.getElementById('modalTitle').textContent = 'Add New Sword';
-                form.reset();
+                document.getElementById('swordForm').reset();
             }
             
             modal.style.display = 'flex';
@@ -508,55 +1478,29 @@
             currentEditIndex = null;
         }
 
-        function deleteSword(index) {
-            if (confirm(`Delete ${swords[index].name}?`)) {
-                swords.splice(index, 1);
-                localStorage.setItem('swords', JSON.stringify(swords));
-                renderSwords();
-            }
-        }
-
-        // Event listeners
-        document.getElementById('addSwordBtn').addEventListener('click', () => {
-            openEditModal(null);
-        });
-
-        document.getElementById('swordForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const sword = {
-                name: document.getElementById('swordName').value,
-                value: document.getElementById('swordValue').value,
-                category: document.getElementById('swordCategory').value,
-                image: document.getElementById('swordImage').value
-            };
-
-            if (currentEditIndex !== null) {
-                swords[currentEditIndex] = sword;
+        function deleteSword(index, isFilteredIndex = false) {
+            let swordName;
+            if (isFilteredIndex) {
+                swordName = filteredSwords[index].name;
+                // Find the original index in the main swords array
+                index = swords.findIndex(s => s.name === swordName);
             } else {
-                swords.push(sword);
+                swordName = swords[index].name;
             }
             
-            localStorage.setItem('swords', JSON.stringify(swords));
-            renderSwords();
-            closeModal();
-        });
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                closeModal();
+            if (confirm(`Delete ${swordName}?`)) {
+                swords.splice(index, 1);
+                filterSwords(currentFilter); // Refresh the current filter view
             }
         }
 
-        // Password input on Enter key
-        document.getElementById('adminPassword').addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                checkLogin();
-            }
-        });
-
-        // Initialize
-        init();
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            // Since we're not saving to localStorage anymore, admin edits are temporary
+            // You might want to implement a proper backend if persistent changes are needed
+            alert("Admin edits are temporary in this version. Consider implementing a backend for persistent changes.");
+            closeModal();
+        }
     </script>
-
-</body></html>
+</body>
+</html>
