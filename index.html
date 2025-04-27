@@ -871,43 +871,43 @@
         </button>
 
     <!-- Trade Calculator -->
-    <div class="calculator-container" id="calculatorContainer">
-        <div class="calculator-grid">
-            <div class="calculator-column">
-                <h4>Your Offer</h4>
-                <div class="calculator-trade-side" id="leftTradeSide">
-                    <div class="calculator-item">
-                        <select class="calculator-select calculator-sword-select">
-                            <option value="">Select Sword</option>
-                        </select>
-                        <input type="number" class="calculator-input" value="1" min="1">
-                        <button class="calculator-remove-btn">×</button>
-                    </div>
+<div class="calculator-container" id="calculatorContainer">
+    <div class="calculator-grid">
+        <div class="calculator-column">
+            <h4>Your Offer</h4>
+            <div class="calculator-trade-side" id="leftTradeSide">
+                <div class="calculator-item">
+                    <select class="calculator-select calculator-sword-select">
+                        <option value="">Select Sword</option>
+                    </select>
+                    <input type="number" class="calculator-input" value="1" min="1">
+                    <button class="calculator-remove-btn">×</button>
                 </div>
-                <button class="calculator-add-btn" id="addLeftItem">+ Add Sword</button>
             </div>
-            
-            <div class="calculator-equals">=</div>
-            
-            <div class="calculator-column">
-                <h4>Their Offer</h4>
-                <div class="calculator-trade-side" id="rightTradeSide">
-                    <div class="calculator-item">
-                        <select class="calculator-select calculator-sword-select">
-                            <option value="">Select Sword</option>
-                        </select>
-                        <input type="number" class="calculator-input" value="1" min="1">
-                        <button class="calculator-remove-btn">×</button>
-                    </div>
-                </div>
-                <button class="calculator-add-btn" id="addRightItem">+ Add Sword</button>
-            </div>
+            <button class="calculator-add-btn" id="addLeftItem">+ Add Sword</button>
         </div>
-        <div class="calculator-result" id="calculatorResult">
-            <div class="result-main">Select swords to compare values</div>
-            <div class="calculator-result-value" id="valueDifference"></div>
+        
+        <div class="calculator-equals">=</div>
+        
+        <div class="calculator-column">
+            <h4>Their Offer</h4>
+            <div class="calculator-trade-side" id="rightTradeSide">
+                <div class="calculator-item">
+                    <select class="calculator-select calculator-sword-select">
+                        <option value="">Select Sword</option>
+                    </select>
+                    <input type="number" class="calculator-input" value="1" min="1">
+                    <button class="calculator-remove-btn">×</button>
+                </div>
+            </div>
+            <button class="calculator-add-btn" id="addRightItem">+ Add Sword</button>
         </div>
     </div>
+    <div class="calculator-result" id="calculatorResult">
+        <div id="resultMain">Select swords to compare values</div>
+        <div id="valueDifference"></div>
+    </div>
+</div>
 
         <!-- Sort Controls -->
         <div class="sort-controls">
@@ -1616,7 +1616,7 @@
             }
         }
 
-     function updateTradeCalculation() {
+function updateTradeCalculation() {
     const leftItems = Array.from(document.getElementById('leftTradeSide').querySelectorAll('.calculator-item'));
     const rightItems = Array.from(document.getElementById('rightTradeSide').querySelectorAll('.calculator-item'));
     
@@ -1658,12 +1658,13 @@
         }
     }
     
+    const resultMain = document.getElementById('resultMain');
+    const valueDiff = document.getElementById('valueDifference');
     const resultElement = document.getElementById('calculatorResult');
-    const valueDiffElement = document.getElementById('valueDifference');
     
     if (missingSwords || leftTotal === 0 || rightTotal === 0) {
-        resultElement.querySelector('.result-main').textContent = 'Select swords to compare values';
-        valueDiffElement.textContent = '';
+        resultMain.textContent = 'Select swords to compare values';
+        valueDiff.textContent = '';
         resultElement.className = 'calculator-result';
         return;
     }
@@ -1677,20 +1678,20 @@
         // If leftTotal is significantly larger, it's a lose for you
         resultText = `L - You're losing ${absoluteDifference.toFixed(1)} value`;
         resultClass = 'wfl-lose';
-        diffText = `(You: ${leftTotal.toFixed(1)} vs Them: ${rightTotal.toFixed(1)})`;
+        diffText = `(Your offer: ${leftTotal.toFixed(1)} vs Their offer: ${rightTotal.toFixed(1)})`;
     } else if (difference < -rightTotal * 0.1) {
         // If rightTotal is significantly larger, it's a win for you
         resultText = `W - You're gaining ${absoluteDifference.toFixed(1)} value`;
         resultClass = 'wfl-win';
-        diffText = `(You: ${leftTotal.toFixed(1)} vs Them: ${rightTotal.toFixed(1)})`;
+        diffText = `(Your offer: ${leftTotal.toFixed(1)} vs Their offer: ${rightTotal.toFixed(1)})`;
     } else {
         resultText = `F - Values are equal`;
         resultClass = 'wfl-fair';
-        diffText = `(You: ${leftTotal.toFixed(1)} vs Them: ${rightTotal.toFixed(1)})`;
+        diffText = `(Your offer: ${leftTotal.toFixed(1)} vs Their offer: ${rightTotal.toFixed(1)})`;
     }
     
-    resultElement.querySelector('.result-main').textContent = resultText;
-    valueDiffElement.textContent = diffText;
+    resultMain.textContent = resultText;
+    valueDiff.textContent = diffText;
     resultElement.className = `calculator-result ${resultClass}`;
 }
 
