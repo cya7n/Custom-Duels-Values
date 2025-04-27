@@ -1385,100 +1385,105 @@
             }
         ];
 
-        let currentEditIndex = null;
-        let currentFilter = 'all';
-        let currentSort = 'value-desc';
-        let isAdmin = false;
-        let currentDetailsIndex = null;
-        let filteredSwords = [];
-        let isListView = false;
+let currentEditIndex = null;
+let currentFilter = 'all';
+let currentSort = 'value-desc';
+let isAdmin = false;
+let currentDetailsIndex = null;
+let filteredSwords = [];
+let isListView = false;
 
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check for saved theme preference
-            if (localStorage.getItem('darkMode') === 'enabled') {
-                document.body.classList.add('dark-mode');
-                document.getElementById('themeToggle').textContent = 'Light Mode';
-            }
-            
-            // Check for saved view preference
-            if (localStorage.getItem('viewMode') === 'list') {
-                toggleView();
-            }
-            
-            // Set up event listeners
-            document.getElementById('loginBtn').addEventListener('click', showLoginModal);
-            document.getElementById('logoutBtn').addEventListener('click', logout);
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-            document.getElementById('viewToggle').addEventListener('click', toggleView);
-            document.getElementById('addSwordBtn').addEventListener('click', () => openEditModal(null));
-            document.getElementById('confirmLoginBtn').addEventListener('click', checkLogin);
-            document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
-            document.getElementById('swordForm').addEventListener('submit', handleFormSubmit);
-            document.getElementById('notesToggle').addEventListener('click', toggleNotes);
-            document.getElementById('closeDetails').addEventListener('click', closeDetailsModal);
-            document.getElementById('editDetailsBtn').addEventListener('click', editCurrentDetails);
-            document.getElementById('deleteDetailsBtn').addEventListener('click', deleteCurrentDetails);
-            document.getElementById('sortSelect').addEventListener('change', function() {
-                currentSort = this.value;
-                filterAndSortSwords();
-            });
-            
-            // Trade calculator event listeners
-            document.getElementById('calculatorToggle').addEventListener('click', toggleCalculator);
-            document.getElementById('addLeftItem').addEventListener('click', () => addTradeItem('left'));
-            document.getElementById('addRightItem').addEventListener('click', () => addTradeItem('right'));
-            
-            // Tab filter buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    filterSwords(btn.dataset.filter);
-                });
-            });
-
-            // Password input on Enter key
-            document.getElementById('adminPassword').addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') checkLogin();
-            });
-
-            // Close modal when clicking outside
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) closeModal();
-                });
-            });
-
-            // Close details modal when clicking outside
-            document.getElementById('swordDetailsModal').addEventListener('click', function(e) {
-                if (e.target === this) closeDetailsModal();
-            });
-
-            // Initial render
-            filterAndSortSwords();
-            checkAuthStatus();
-            populateCalculatorSelects();
-            
-            // Add event delegation for remove buttons
-            document.getElementById('leftTradeSide').addEventListener('click', handleRemoveItem);
-            document.getElementById('rightTradeSide').addEventListener('click', handleRemoveItem);
-            
-            // Add event delegation for calculator inputs
-            document.getElementById('leftTradeSide').addEventListener('input', updateTradeCalculation);
-            document.getElementById('rightTradeSide').addEventListener('input', updateTradeCalculation);
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Check for saved theme preference
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('themeToggle').textContent = 'Light Mode';
+    }
+    
+    // Check for saved view preference
+    if (localStorage.getItem('viewMode') === 'list') {
+        toggleView();
+    }
+    
+    // Set up event listeners
+    document.getElementById('loginBtn').addEventListener('click', showLoginModal);
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    document.getElementById('viewToggle').addEventListener('click', toggleView);
+    document.getElementById('confirmLoginBtn').addEventListener('click', checkLogin);
+    document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
+    document.getElementById('swordForm').addEventListener('submit', handleFormSubmit);
+    document.getElementById('notesToggle').addEventListener('click', toggleNotes);
+    document.getElementById('closeDetails').addEventListener('click', closeDetailsModal);
+    document.getElementById('editDetailsBtn').addEventListener('click', editCurrentDetails);
+    document.getElementById('deleteDetailsBtn').addEventListener('click', deleteCurrentDetails);
+    document.getElementById('sortSelect').addEventListener('change', function() {
+        currentSort = this.value;
+        filterAndSortSwords();
+    });
+    
+    // Trade calculator event listeners
+    document.getElementById('calculatorToggle').addEventListener('click', toggleCalculator);
+    document.getElementById('addLeftItem').addEventListener('click', () => addTradeItem('left'));
+    document.getElementById('addRightItem').addEventListener('click', () => addTradeItem('right'));
+    
+    // Tab filter buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterSwords(btn.dataset.filter);
         });
+    });
 
-        function toggleCalculator() {
-            const calculator = document.getElementById('calculatorContainer');
-            const toggleBtn = document.getElementById('calculatorToggle');
-            
-            if (calculator.style.display === 'block') {
-                calculator.style.display = 'none';
-                toggleBtn.classList.remove('active');
-            } else {
-                calculator.style.display = 'block';
-                toggleBtn.classList.add('active');
-            }
-        }
+    // Password input on Enter key
+    document.getElementById('adminPassword').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') checkLogin();
+    });
+
+    // Close modal when clicking outside
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    });
+
+    // Close details modal when clicking outside
+    document.getElementById('swordDetailsModal').addEventListener('click', function(e) {
+        if (e.target === this) closeDetailsModal();
+    });
+
+    // Initial render
+    filterAndSortSwords();
+    checkAuthStatus();
+    populateCalculatorSelects();
+    
+    // Initialize calculator with one item per side
+    addTradeItem('left');
+    addTradeItem('right');
+    
+    // Add event delegation for remove buttons
+    document.getElementById('leftTradeSide').addEventListener('click', handleRemoveItem);
+    document.getElementById('rightTradeSide').addEventListener('click', handleRemoveItem);
+    
+    // Add event delegation for calculator inputs
+    document.getElementById('leftTradeSide').addEventListener('change', updateTradeCalculation);
+    document.getElementById('rightTradeSide').addEventListener('change', updateTradeCalculation);
+    document.getElementById('leftTradeSide').addEventListener('input', updateTradeCalculation);
+    document.getElementById('rightTradeSide').addEventListener('input', updateTradeCalculation);
+});
+
+function toggleCalculator() {
+    const calculator = document.getElementById('calculatorContainer');
+    const toggleBtn = document.getElementById('calculatorToggle');
+    
+    if (calculator.style.display === 'block') {
+        calculator.style.display = 'none';
+        toggleBtn.classList.remove('active');
+    } else {
+        calculator.style.display = 'block';
+        toggleBtn.classList.add('active');
+    }
+}
 
         function toggleNotes() {
             document.getElementById('notesPanel').classList.toggle('active');
@@ -1573,48 +1578,42 @@
             });
         }
 
-        function addTradeItem(side) {
-            const container = document.getElementById(`${side}TradeSide`);
-            const newItem = document.createElement('div');
-            newItem.className = 'calculator-item';
-            newItem.innerHTML = `
-                <select class="calculator-select calculator-sword-select">
-                    <option value="">Select Sword</option>
-                </select>
-                <input type="number" class="calculator-input" value="1" min="1">
-                <button class="calculator-remove-btn">×</button>
-            `;
-            
-            container.appendChild(newItem);
-            
-            // Populate the new select with sword options
-            const select = newItem.querySelector('.calculator-sword-select');
-            [...swords].sort((a, b) => a.name.localeCompare(b.name)).forEach(sword => {
-                const option = document.createElement('option');
-                option.value = sword.name;
-                option.textContent = sword.name;
-                select.appendChild(option);
-            });
-            
-            // Add event listener for the new select
-            select.addEventListener('change', updateTradeCalculation);
-            
-            // Add event listener for the new quantity input
-            newItem.querySelector('.calculator-input').addEventListener('input', updateTradeCalculation);
-            
-            // Update calculation
+function addTradeItem(side) {
+    const container = document.getElementById(`${side}TradeSide`);
+    const newItem = document.createElement('div');
+    newItem.className = 'calculator-item';
+    newItem.innerHTML = `
+        <select class="calculator-select calculator-sword-select">
+            <option value="">Select Sword</option>
+        </select>
+        <input type="number" class="calculator-input" value="1" min="1">
+        <button class="calculator-remove-btn">×</button>
+    `;
+    
+    container.appendChild(newItem);
+    
+    // Populate the new select with sword options
+    const select = newItem.querySelector('.calculator-sword-select');
+    [...swords].sort((a, b) => a.name.localeCompare(b.name)).forEach(sword => {
+        const option = document.createElement('option');
+        option.value = sword.name;
+        option.textContent = sword.name;
+        select.appendChild(option);
+    });
+    
+    // Update calculation
+    updateTradeCalculation();
+}
+
+function handleRemoveItem(e) {
+    if (e.target.classList.contains('calculator-remove-btn')) {
+        const item = e.target.closest('.calculator-item');
+        if (item && item.parentElement.querySelectorAll('.calculator-item').length > 1) {
+            item.remove();
             updateTradeCalculation();
         }
-
-        function handleRemoveItem(e) {
-            if (e.target.classList.contains('calculator-remove-btn')) {
-                const item = e.target.closest('.calculator-item');
-                if (item && item.parentElement.querySelectorAll('.calculator-item').length > 1) {
-                    item.remove();
-                    updateTradeCalculation();
-                }
-            }
-        }
+    }
+}
 
 function updateTradeCalculation() {
     const leftItems = Array.from(document.getElementById('leftTradeSide').querySelectorAll('.calculator-item'));
@@ -1662,7 +1661,7 @@ function updateTradeCalculation() {
     const valueDiff = document.getElementById('valueDifference');
     const resultElement = document.getElementById('calculatorResult');
     
-    if (missingSwords || leftTotal === 0 || rightTotal === 0) {
+    if (missingSwords || (leftTotal === 0 && rightTotal === 0)) {
         resultMain.textContent = 'Select swords to compare values';
         valueDiff.textContent = '';
         resultElement.className = 'calculator-result';
