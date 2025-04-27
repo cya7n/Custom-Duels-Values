@@ -1616,81 +1616,83 @@
             }
         }
 
-        function updateTradeCalculation() {
-            const leftItems = Array.from(document.getElementById('leftTradeSide').querySelectorAll('.calculator-item'));
-            const rightItems = Array.from(document.getElementById('rightTradeSide').querySelectorAll('.calculator-item'));
-            
-            let leftTotal = 0;
-            let rightTotal = 0;
-            let missingSwords = false;
-            
-            // Calculate left side total
-            for (const item of leftItems) {
-                const select = item.querySelector('.calculator-sword-select');
-                const input = item.querySelector('.calculator-input');
-                
-                if (!select.value) {
-                    missingSwords = true;
-                    continue;
-                }
-                
-                const sword = swords.find(s => s.name === select.value);
-                if (sword) {
-                    const quantity = parseFloat(input.value) || 1;
-                    leftTotal += sword.value * quantity;
-                }
-            }
-            
-            // Calculate right side total
-            for (const item of rightItems) {
-                const select = item.querySelector('.calculator-sword-select');
-                const input = item.querySelector('.calculator-input');
-                
-                if (!select.value) {
-                    missingSwords = true;
-                    continue;
-                }
-                
-                const sword = swords.find(s => s.name === select.value);
-                if (sword) {
-                    const quantity = parseFloat(input.value) || 1;
-                    rightTotal += sword.value * quantity;
-                }
-            }
-            
-            const resultElement = document.getElementById('calculatorResult');
-            const valueDiffElement = document.getElementById('valueDifference');
-            
-            if (missingSwords || leftTotal === 0 || rightTotal === 0) {
-                resultElement.querySelector('.result-main').textContent = 'Select swords to compare values';
-                valueDiffElement.textContent = '';
-                resultElement.className = 'calculator-result';
-                return;
-            }
-            
-            const difference = leftTotal - rightTotal;
-            const absoluteDifference = Math.abs(difference);
-            let resultText, resultClass, diffText;
-            
-            // Using 10% margin for fair trades
-            if (difference > rightTotal * 0.1) {
-                resultText = `W - You're gaining ${absoluteDifference.toFixed(1)} value`;
-                resultClass = 'wfl-win';
-                diffText = `(${leftTotal.toFixed(1)} vs ${rightTotal.toFixed(1)})`;
-            } else if (difference < -rightTotal * 0.1) {
-                resultText = `L - You're losing ${absoluteDifference.toFixed(1)} value`;
-                resultClass = 'wfl-lose';
-                diffText = `(${leftTotal.toFixed(1)} vs ${rightTotal.toFixed(1)})`;
-            } else {
-                resultText = `F - Values are equal`;
-                resultClass = 'wfl-fair';
-                diffText = `(${leftTotal.toFixed(1)} vs ${rightTotal.toFixed(1)})`;
-            }
-            
-            resultElement.querySelector('.result-main').textContent = resultText;
-            valueDiffElement.textContent = diffText;
-            resultElement.className = `calculator-result ${resultClass}`;
+     function updateTradeCalculation() {
+    const leftItems = Array.from(document.getElementById('leftTradeSide').querySelectorAll('.calculator-item'));
+    const rightItems = Array.from(document.getElementById('rightTradeSide').querySelectorAll('.calculator-item'));
+    
+    let leftTotal = 0;
+    let rightTotal = 0;
+    let missingSwords = false;
+    
+    // Calculate left side total
+    for (const item of leftItems) {
+        const select = item.querySelector('.calculator-sword-select');
+        const input = item.querySelector('.calculator-input');
+        
+        if (!select.value) {
+            missingSwords = true;
+            continue;
         }
+        
+        const sword = swords.find(s => s.name === select.value);
+        if (sword) {
+            const quantity = parseFloat(input.value) || 1;
+            leftTotal += sword.value * quantity;
+        }
+    }
+    
+    // Calculate right side total
+    for (const item of rightItems) {
+        const select = item.querySelector('.calculator-sword-select');
+        const input = item.querySelector('.calculator-input');
+        
+        if (!select.value) {
+            missingSwords = true;
+            continue;
+        }
+        
+        const sword = swords.find(s => s.name === select.value);
+        if (sword) {
+            const quantity = parseFloat(input.value) || 1;
+            rightTotal += sword.value * quantity;
+        }
+    }
+    
+    const resultElement = document.getElementById('calculatorResult');
+    const valueDiffElement = document.getElementById('valueDifference');
+    
+    if (missingSwords || leftTotal === 0 || rightTotal === 0) {
+        resultElement.querySelector('.result-main').textContent = 'Select swords to compare values';
+        valueDiffElement.textContent = '';
+        resultElement.className = 'calculator-result';
+        return;
+    }
+    
+    const difference = leftTotal - rightTotal;
+    const absoluteDifference = Math.abs(difference);
+    let resultText, resultClass, diffText;
+    
+    // Using 10% margin for fair trades
+    if (difference > rightTotal * 0.1) {
+        // If leftTotal is significantly larger, it's a lose for you
+        resultText = `L - You're losing ${absoluteDifference.toFixed(1)} value`;
+        resultClass = 'wfl-lose';
+        diffText = `(You: ${leftTotal.toFixed(1)} vs Them: ${rightTotal.toFixed(1)})`;
+    } else if (difference < -rightTotal * 0.1) {
+        // If rightTotal is significantly larger, it's a win for you
+        resultText = `W - You're gaining ${absoluteDifference.toFixed(1)} value`;
+        resultClass = 'wfl-win';
+        diffText = `(You: ${leftTotal.toFixed(1)} vs Them: ${rightTotal.toFixed(1)})`;
+    } else {
+        resultText = `F - Values are equal`;
+        resultClass = 'wfl-fair';
+        diffText = `(You: ${leftTotal.toFixed(1)} vs Them: ${rightTotal.toFixed(1)})`;
+    }
+    
+    resultElement.querySelector('.result-main').textContent = resultText;
+    valueDiffElement.textContent = diffText;
+    resultElement.className = `calculator-result ${resultClass}`;
+}
 
         function filterAndSortSwords() {
             filterSwords(currentFilter);
